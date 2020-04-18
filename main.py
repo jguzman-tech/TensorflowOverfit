@@ -85,8 +85,8 @@ for hidden_units in hidden_units_vec:
                       metrics=['accuracy'])
 
     # feed the model
-    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=30)
-    
+    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=100)
+
     # choose the min validation loss and tran loss
     min_val_loss = min(results.history['val_loss'])
     cor_train_loss = min(results.history['loss'])
@@ -104,7 +104,7 @@ plt.plot([i for i in hidden_units_vec],  [j for j in min_loss_val_arr], color="l
 min_hidden_val_loss = min(min_loss_val_arr)
 index_min = min_loss_val_arr.index(min_hidden_val_loss)
 best_parameter_value = hidden_units_vec[index_min]
-print(best_parameter_value)
+print(f"best_parameter_value = {best_parameter_value}")
 
 plt.scatter(best_parameter_value, min_hidden_val_loss, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='best hidden unites')
 
@@ -128,9 +128,9 @@ retrain_model.compile(optimizer='adam',
 
 # feed the model
 # you can access 'loss' from results_one.history['loss']
-retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=30)
+retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=100)
 
-print(f"10 h-units test accuracy: {retrain_result.history['val_acc'][-1]}")
+print(f"best_parameter_value test accuracy: {retrain_result.history['val_acc'][-1]}")
 
 y_hat =  Baseline(X_train, y_train[:, 0], X_test)
 baseline_accuracy = 100 * (np.mean(y_hat == y_test[:, 0]))
