@@ -44,8 +44,19 @@ pip3 install -r ./requirements.txt
 #+END_SRC
 ** 2. Execution
 #+BEGIN_SRC
-python3 main.py
+usage: main.py [-h] num_of_hidden_units
+
+Create three NN models with TensorFlow
+
+positional arguments:
+  num_of_hidden_units    number of hidden unites uses as exponent of 2
+  
+optional arguments:
+  -h, --help        show this help message and exit
 #+END_SRC
 ** 3. Reproduce our results
 The best_parameter_value will be printed to the terminal and plot.png will be
 written to in the current directory.
+#+BEGIN_SRC
+python3 main.py 7
+#+END_SRC
