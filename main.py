@@ -46,7 +46,9 @@ def Parse(fname):
     np.random.shuffle(temp_ar)
     return temp_ar
 
-parser = argparse.ArgumentParser(description='Create three NN models with TensorFlow')
+parser = argparse.ArgumentParser(description='Create number of hidden units with TensorFlow')
+parser.add_argument('num_hidden_units', type=int,default=10,
+                    help='number of hidden units model')
 args = parser.parse_args()
 temp_ar = Parse("spam.data")
 X = temp_ar[:, 0:-1] # m x n
@@ -59,11 +61,11 @@ num_row = X.shape[0]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 ## Next divide the train data into 50% subtrain, 50% validation.
-X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5)
+X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5, random_state=0)
 
 ## Define a for loop over regularization parameter values, and fit a neural network for each.
 # define hidden units
-sequence = np.arange(1,11)
+sequence = np.arange(1,args.num_hidden_units  + 1)
 hidden_units_vec = np.power(2, sequence)
 
 # create a min loss value array
@@ -87,7 +89,7 @@ for hidden_units in hidden_units_vec:
     # feed the model
     results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=100)
     
-    # choose the min validation loss and tran loss
+     # choose the min validation loss and tran loss
     min_val_loss = min(results.history['val_loss'])
     cor_train_loss = min(results.history['loss'])
 
@@ -104,7 +106,7 @@ plt.plot([i for i in hidden_units_vec],  [j for j in min_loss_val_arr], color="l
 min_hidden_val_loss = min(min_loss_val_arr)
 index_min = min_loss_val_arr.index(min_hidden_val_loss)
 best_parameter_value = hidden_units_vec[index_min]
-print(best_parameter_value)
+print(f"best_parameter_value = {best_parameter_value}")
 
 plt.scatter(best_parameter_value, min_hidden_val_loss, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='best hidden unites')
 
@@ -130,7 +132,7 @@ retrain_model.compile(optimizer='adam',
 # you can access 'loss' from results_one.history['loss']
 retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=100)
 
-print(f"10 h-units test accuracy: {retrain_result.history['val_acc'][-1]}")
+print(f"best_parameter_value test accuracy: {retrain_result.history['val_acc'][-1] * 100}")
 
 y_hat =  Baseline(X_train, y_train[:, 0], X_test)
 baseline_accuracy = 100 * (np.mean(y_hat == y_test[:, 0]))
