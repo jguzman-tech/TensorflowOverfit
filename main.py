@@ -43,6 +43,7 @@ def Parse(fname):
         if(std == 0):
             print("col " + str(col) + " has an std of 0")
         temp_ar[:, col] = stats.zscore(temp_ar[:, col])
+    np.random.seed(0)
     np.random.shuffle(temp_ar)
     return temp_ar
 
