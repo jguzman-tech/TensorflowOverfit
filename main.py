@@ -85,7 +85,7 @@ for hidden_units in hidden_units_vec:
                       metrics=['accuracy'])
 
     # feed the model
-    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=30)
+    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=100)
     
     # choose the min validation loss and tran loss
     min_val_loss = min(results.history['val_loss'])
@@ -128,7 +128,7 @@ retrain_model.compile(optimizer='adam',
 
 # feed the model
 # you can access 'loss' from results_one.history['loss']
-retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=30)
+retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=100)
 
 print(f"10 h-units test accuracy: {retrain_result.history['val_acc'][-1]}")
 
