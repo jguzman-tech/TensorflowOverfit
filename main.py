@@ -85,7 +85,7 @@ for hidden_units in hidden_units_vec:
                       metrics=['accuracy'])
 
     # feed the model
-    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_one)
+    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=30)
     
     # choose the min validation loss and tran loss
     min_val_loss = min(results.history['val_loss'])
@@ -96,73 +96,42 @@ for hidden_units in hidden_units_vec:
     cor_loss_train_arr.append(cor_train_loss)
 
 ##On the same plot, show the logistic loss as a function of the regularization parameter
-plt.xlabel("epoch")
+plt.xlabel("hidden units")
 plt.ylabel("logistic loss")
 plt.plot([i for i in hidden_units_vec], [j for j in cor_loss_train_arr], color="lightblue", linestyle="solid", linewidth=3, label=" subtrain")
 plt.plot([i for i in hidden_units_vec],  [j for j in min_loss_val_arr], color="lightblue", linestyle="dashed", linewidth=3, label=" validation")
 
-best_epochs = results_three.history['val_loss'].index(min_val_loss) + 1
+min_hidden_val_loss = min(min_loss_val_arr)
+index_min = min_loss_val_arr.index(min_hidden_val_loss)
+best_parameter_value = hidden_units_vec[index_min]
+print(best_parameter_value)
 
-plt.xlabel("epoch")
-plt.ylabel("logistic loss")
-
-plt.scatter(best_epochs, min_val_loss, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='1000 h-units minimum')
+plt.scatter(best_parameter_value, min_hidden_val_loss, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='best hidden unites')
 
 plt.legend()
-plt.savefig(f"{args.max_epochs_one}_{args.max_epochs_two}_{args.max_epochs_three}.png")
+plt.savefig(f"plot.png")
 
-# RETRAIN MODELS
-# for first model
+## Re-train the network on the entire train set
+print("RE-TRAINING")
 # setup layers
 
-print("RE-TRAINING")
-
-model_one = keras.Sequential([
+retrain_model = keras.Sequential([
     keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(10, activation='sigmoid'),
+    keras.layers.Dense(best_parameter_value, activation='sigmoid'),
     keras.layers.Dense(1, activation='sigmoid')
 ])
 
 # compiler model
-model_one.compile(optimizer='adam',
+retrain_model.compile(optimizer='adam',
                   loss='binary_crossentropy',
                   metrics=['accuracy'])
 
-# for second model
-# setup layers
-model_two = keras.Sequential([
-    keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(100, activation='sigmoid'),
-    keras.layers.Dense(1, activation='sigmoid')
-])
-# compiler model
-model_two.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
-
-# for third model
-# setup layers
-model_three = keras.Sequential([
-    keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(1000, activation='sigmoid'),
-    keras.layers.Dense(1, activation='sigmoid')
-])
-# compiler model
-model_three.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
-
-
 # feed the model
-
 # you can access 'loss' from results_one.history['loss']
-results_one = model_one.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=best_epochs_one)
-results_two = model_two.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=best_epochs_two)
-results_three = model_three.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=best_epochs_three)
+retrain_result = retrain_model.fit(X_train, y_train, validation_data = (X_test, y_test), epochs=30)
 
-print(f"10 h-units test accuracy: {results_one.history['val_acc'][-1]}")
-print(f"100 h-units test accuracy: {results_two.history['val_acc'][-1]}")
-print(f"1000 h-units test accuracy: {results_three.history['val_acc'][-1]}")
+print(f"10 h-units test accuracy: {retrain_result.history['val_acc'][-1]}")
+
 y_hat =  Baseline(X_train, y_train[:, 0], X_test)
 baseline_accuracy = 100 * (np.mean(y_hat == y_test[:, 0]))
 print(f"baseline accuracy: {baseline_accuracy}")
