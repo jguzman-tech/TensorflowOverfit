@@ -21,7 +21,7 @@ from sklearn.model_selection import train_test_split
 
 # warnings.simplefilter('error') # treat warnings as errors
 figure(num=None, figsize=(30, 8), dpi=80, facecolor='w', edgecolor='k')
-matplotlib.rc('font', size=24)
+matplotlib.rc('font', size=30)
 
 def Baseline(X_mat, y_vec, X_new):
     pred_new = np.zeros((X_new.shape[0],))
@@ -43,6 +43,7 @@ def Parse(fname):
         if(std == 0):
             print("col " + str(col) + " has an std of 0")
         temp_ar[:, col] = stats.zscore(temp_ar[:, col])
+    np.random.seed(0)
     np.random.shuffle(temp_ar)
     return temp_ar
 
@@ -58,7 +59,7 @@ y = y.astype(int)
 num_row = X.shape[0]
 
 ## Divide the data into 80% train, 20% test observations (out of all observations in the whole data set).
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
 ## Next divide the train data into 50% subtrain, 50% validation.
 X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5, random_state=0)
