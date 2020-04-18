@@ -47,12 +47,6 @@ def Parse(fname):
     return temp_ar
 
 parser = argparse.ArgumentParser(description='Create three NN models with TensorFlow')
-parser.add_argument('max_epochs_one', type=int,default=300,
-                    help='maximum epochs for the 10 hidden units model')
-parser.add_argument('max_epochs_two', type=int,default=300,
-                    help='maximum epochs for the 100 hidden units model')
-parser.add_argument('max_epochs_three', type=int,default=300,
-                    help='maximum epochs for the 1000 hidden units model')
 args = parser.parse_args()
 temp_ar = Parse("spam.data")
 X = temp_ar[:, 0:-1] # m x n
@@ -107,35 +101,12 @@ plt.ylabel("logistic loss")
 plt.plot([i for i in hidden_units_vec], [j for j in cor_loss_train_arr], color="lightblue", linestyle="solid", linewidth=3, label=" subtrain")
 plt.plot([i for i in hidden_units_vec],  [j for j in min_loss_val_arr], color="lightblue", linestyle="dashed", linewidth=3, label=" validation")
 
-
-
-
-results_two = model_two.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_two)
-results_three = model_three.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_three)
-
-min_val_loss_one = min(results_one.history['val_loss'])
-min_val_loss_two = min(results_two.history['val_loss'])
-min_val_loss_three = min(results_three.history['val_loss'])
-
-best_epochs_one = results_one.history['val_loss'].index(min_val_loss_one) + 1
-best_epochs_two = results_two.history['val_loss'].index(min_val_loss_two) + 1
-best_epochs_three = results_three.history['val_loss'].index(min_val_loss_three) + 1
+best_epochs = results_three.history['val_loss'].index(min_val_loss) + 1
 
 plt.xlabel("epoch")
 plt.ylabel("logistic loss")
 
-plt.plot([i for i in range(1, args.max_epochs_one + 1)], results_one.history['loss'], color="lightblue", linestyle="solid", linewidth=3, label="10 h-units subtrain")
-plt.plot([i for i in range(1, args.max_epochs_one + 1)], results_one.history['val_loss'], color="lightblue", linestyle="dashed", linewidth=3, label="10 h-units validation")
-
-plt.plot([i for i in range(1, args.max_epochs_two + 1)], results_two.history['loss'], color="darkblue", linestyle="solid", linewidth=3, label="100 h-units subtrain")
-plt.plot([i for i in range(1, args.max_epochs_two + 1)], results_two.history['val_loss'], color="darkblue", linestyle="dashed", linewidth=3, label="100 h-units validation")
-
-plt.plot([i for i in range(1, args.max_epochs_three + 1)], results_three.history['loss'], color="black", linestyle="solid", linewidth=3, label="1000 h-units subtrain")
-plt.plot([i for i in range(1, args.max_epochs_three + 1)], results_three.history['val_loss'], color="black", linestyle="dashed", linewidth=3, label="1000 h-units validation")
-
-plt.scatter(best_epochs_one, min_val_loss_one, marker='+', color='red', s=160, facecolor='red', linewidth=3, label='10 h-units minimum')
-plt.scatter(best_epochs_two, min_val_loss_two, marker='x', color='red', s=160, facecolor='red', linewidth=3, label='100 h-units minimum')
-plt.scatter(best_epochs_three, min_val_loss_three, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='1000 h-units minimum')
+plt.scatter(best_epochs, min_val_loss, marker='o', color='red', s=160, facecolor='none', linewidth=3, label='1000 h-units minimum')
 
 plt.legend()
 plt.savefig(f"{args.max_epochs_one}_{args.max_epochs_two}_{args.max_epochs_three}.png")
