@@ -64,48 +64,27 @@ num_row = X.shape[0]
 ## Divide the data into 80% train, 20% test observations (out of all observations in the whole data set).
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
-## Next divide the train data into 60% subtrain, 40% validation.
-X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.4)
+## Next divide the train data into 50% subtrain, 50% validation.
+X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5)
 
-## Define three different neural networks
-# for first model
-# setup layers
+## Define a for loop over regularization parameter values, and fit a neural network for each.
+# define hidden units
+sequence = range(1,11)
+hidden_units_vec = np.power(sequence, 2)
 
-model_one = keras.Sequential([
-    keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(10, activation='sigmoid'),
-    keras.layers.Dense(1, activation='sigmoid')
-])
+#loop through hidden_units_vec
+for hidden_units in hidden_units_vec:
 
-# compiler model
-model_one.compile(optimizer='adam',
-                  loss='binary_crossentropy',
-                  metrics=['accuracy'])
+    model_one = keras.Sequential([
+        keras.layers.Flatten(input_shape=X_subtrain[0].shape),
+        keras.layers.Dense(hidden_units, activation='sigmoid'),
+        keras.layers.Dense(1, activation='sigmoid')
+    ])
 
-# for second model
-# setup layers
-model_two = keras.Sequential([
-    keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(100, activation='sigmoid'),
-    keras.layers.Dense(1, activation='sigmoid')
-])
-# compiler model
-model_two.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
-
-# for third model
-# setup layers
-model_three = keras.Sequential([
-    keras.layers.Flatten(input_shape=X_subtrain[0].shape),
-    keras.layers.Dense(1000, activation='sigmoid'),
-    keras.layers.Dense(1, activation='sigmoid')
-])
-# compiler model
-model_three.compile(optimizer='adam',
-              loss='binary_crossentropy',
-              metrics=['accuracy'])
-
+    # compiler model
+    model_one.compile(optimizer='adam',
+                      loss='binary_crossentropy',
+                      metrics=['accuracy'])
 
 # feed the model
 
