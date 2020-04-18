@@ -59,7 +59,7 @@ num_row = X.shape[0]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
 
 ## Next divide the train data into 50% subtrain, 50% validation.
-X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5)
+X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y_train, test_size=0.5, random_state=0)
 
 ## Define a for loop over regularization parameter values, and fit a neural network for each.
 # define hidden units
