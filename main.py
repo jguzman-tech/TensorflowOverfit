@@ -69,8 +69,12 @@ X_subtrain, X_validation, y_subtrain, y_validation = train_test_split(X_train, y
 
 ## Define a for loop over regularization parameter values, and fit a neural network for each.
 # define hidden units
-sequence = range(1,11)
-hidden_units_vec = np.power(sequence, 2)
+sequence = np.arange(1,11)
+hidden_units_vec = np.power(2, sequence)
+
+# create a min loss value array
+min_loss_val_arr = list()
+cor_loss_train_arr = list()
 
 #loop through hidden_units_vec
 for hidden_units in hidden_units_vec:
@@ -86,10 +90,26 @@ for hidden_units in hidden_units_vec:
                       loss='binary_crossentropy',
                       metrics=['accuracy'])
 
-# feed the model
+    # feed the model
+    results = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_one)
+    
+    # choose the min validation loss and tran loss
+    min_val_loss = min(results.history['val_loss'])
+    cor_train_loss = min(results.history['loss'])
 
-# you can access 'loss' from results_one.history['loss']
-results_one = model_one.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_one)
+    # put this value to our min_val_loss_arr
+    min_loss_val_arr.append(min_val_loss)
+    cor_loss_train_arr.append(cor_train_loss)
+
+##On the same plot, show the logistic loss as a function of the regularization parameter
+plt.xlabel("epoch")
+plt.ylabel("logistic loss")
+plt.plot([i for i in hidden_units_vec], [j for j in cor_loss_train_arr], color="lightblue", linestyle="solid", linewidth=3, label=" subtrain")
+plt.plot([i for i in hidden_units_vec],  [j for j in min_loss_val_arr], color="lightblue", linestyle="dashed", linewidth=3, label=" validation")
+
+
+
+
 results_two = model_two.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_two)
 results_three = model_three.fit(X_subtrain, y_subtrain, validation_data = (X_validation, y_validation), epochs=args.max_epochs_three)
 
